@@ -76,7 +76,7 @@ CREATE TABLE users (
 
 ***
 
-## Coming to the Anki Add-on library soon...
+## Coming to the Anki Add-on library soon
 
 Because the original add-on is no longer maintained, I intend to publish this as a separate add-on in the near-future, then maintain it as long as I have the time. Until then, you can copy the code here into your local Anki addons folder for local use (the add-on will only be available on the device to which you copy the files). If you'd like to do that:
 
