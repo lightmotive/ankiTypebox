@@ -5,6 +5,7 @@ from aqt.reviewer import Reviewer
 from anki.utils import stripHTML
 from aqt import gui_hooks
 from aqt import mw
+from .diff_match_patch import diff_match_patch
 
 Reviewer.typeboxAnsPat = r"\[\[typebox:(.*?)\]\]"
 Reviewer.newline_placeholder = "__typeboxnewline__"
@@ -111,9 +112,28 @@ def typeboxAnsAnswerFilter(self, buf: str) -> str:
 	provided = re.sub(r"\n", self.newline_placeholder, provided)
 	expected = re.sub(r"\n", self.newline_placeholder, expected)
 	# Anki compare (backend):
-	output = self.mw.col.compare_answer(expected, provided)
+	output_anki_compare_answer = self.mw.col.compare_answer(expected, provided)
+	# Restore line breaks to comparison result:
+	output_anki_compare_answer = output_anki_compare_answer.replace(self.newline_placeholder, "<br>")
+
+	# Generate inline-comparison, which is arguably easier to read than the
+	# `self.mw.col.compare_answer` method's result:
+	dmp = diff_match_patch()
+	diffs = dmp.diff_main(provided, expected)
+	dmp.diff_cleanupSemantic(diffs)
+	output = diff_prettyHtml(dmp, diffs)
 	# Restore line breaks to comparison result:
 	output = output.replace(self.newline_placeholder, "<br>")
+	output = f'<code id=typeans>{output}</code>'
+	# Add visual indicator border indicating overall correctness:
+	# TODO: duplicate diff_prettyHtml method to add CSS class in place of style,
+	#       then add style to, or merge styles with, `s` string's `<style>`
+	# 			element below.
+	outputHasDiff = re.search(r"<(del|ins)", output)
+	diffResultCSSClass = "answer-incorrect" if outputHasDiff else "answer-correct"
+
+	# TEMPORARY: show both comparisons to help refine new comparison output:
+	output = f'[Anki comparison]<br>{output_anki_compare_answer}<br><br>[DMP comparison]<br>{output}'
 
 	# and update the type answer area
 	if self.card.model()["css"] and self.card.model()["css"].strip():
@@ -130,19 +150,60 @@ pre {
    white-space:pre-wrap;
    %s%s 
 }
+.textbox-output.answer-correct {
+	border-left: 0.6em solid rgb(100, 255, 148);
+}
+.textbox-output.answer-incorrect {
+	border-left: 0.6em solid rgb(255, 150, 154);
+}
+ins.diff-add {
+	background-color: rgb(193, 193, 193);
+}
+del.diff-remove {
+	background-color: rgb(255, 150, 154);
+}
 </style>    
-<pre class=textbox-output>%s</pre>
+<pre class="textbox-output %s">%s</pre>
 </div>
 """ % (
 		font_family,
 		font_size,
+		diffResultCSSClass,
 		output,
 	)
 	if hadHR:
 		# a hack to ensure the q/a separator falls before the answer
 		# comparison when user is using {{FrontSide}}
 		s = f"<hr id=answer>{s}"
-	return re.sub(self.typeboxAnsPat, s.replace('\\', r'\\'), buf)
+	result = re.sub(self.typeboxAnsPat, s.replace('\\', r'\\'), buf)
+	return result # + "<br><br>[Debug]<br>" + html.escape(result)
+
+def diff_prettyHtml(dmp, diffs):
+	"""Convert a diff array into a pretty HTML report.
+	Customized version of diff_match_patch#diff_prettyHtml.
+
+	Args:
+	  dmp: instance of diff_match_patch class.
+		diffs: Array of diff tuples.
+
+	Returns:
+		HTML representation.
+	"""
+	html = []
+	for (op, data) in diffs:
+			text = (
+					data.replace("&", "&amp;")
+					.replace("<", "&lt;")
+					.replace(">", "&gt;")
+					.replace("\n", "&para;<br>")
+			)
+			if op == dmp.DIFF_INSERT:
+					html.append('<ins class="diff-add">%s</ins>' % text)
+			elif op == dmp.DIFF_DELETE:
+					html.append('<del class="diff-remove">%s</del>' % text)
+			elif op == dmp.DIFF_EQUAL:
+					html.append("<span>%s</span>" % text)
+	return "".join(html)
 
 def focusTypebox(card):
     """
