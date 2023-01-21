@@ -111,10 +111,6 @@ def typeboxAnsAnswerFilter(self, buf: str) -> str:
 	# Replace remaining "\n" chars with newline placeholder:
 	provided = re.sub(r"\n", self.newline_placeholder, provided)
 	expected = re.sub(r"\n", self.newline_placeholder, expected)
-	# Anki compare (backend):
-	output_anki_compare_answer = self.mw.col.compare_answer(expected, provided)
-	# Restore line breaks to comparison result:
-	output_anki_compare_answer = output_anki_compare_answer.replace(self.newline_placeholder, "<br>")
 
 	# Generate inline-comparison, which is arguably easier to read than the
 	# `self.mw.col.compare_answer` method's result:
@@ -125,17 +121,12 @@ def typeboxAnsAnswerFilter(self, buf: str) -> str:
 	# Restore line breaks to comparison result:
 	output = output.replace(self.newline_placeholder, "<br>")
 	output = f'<code id=typeans>{output}</code>'
-	# Add visual indicator border indicating overall correctness:
-	# TODO: duplicate diff_prettyHtml method to add CSS class in place of style,
-	#       then add style to, or merge styles with, `s` string's `<style>`
-	# 			element below.
+	# Determine correctness to apply correct class for overall result indicator
+	# (Green or Red left border)
 	outputHasDiff = re.search(r"<(del|ins)", output)
 	diffResultCSSClass = "answer-incorrect" if outputHasDiff else "answer-correct"
 
-	# TEMPORARY: show both comparisons to help refine new comparison output:
-	output = f'[Anki comparison]<br>{output_anki_compare_answer}<br><br>[DMP comparison]<br>{output}'
-
-	# and update the type answer area
+	# Update the type answer area
 	if self.card.model()["css"] and self.card.model()["css"].strip():
 		parser = tinycss.make_parser("page3")
 		parsed_style = parser.parse_stylesheet(self.card.model()["css"])
@@ -156,10 +147,10 @@ pre {
 .textbox-output.answer-incorrect {
 	border-left: 0.6em solid rgb(255, 150, 154);
 }
-ins.diff-add {
+ins.diff-missing {
 	background-color: rgb(193, 193, 193);
 }
-del.diff-remove {
+del.diff-wrong {
 	background-color: rgb(255, 150, 154);
 }
 </style>    
@@ -176,7 +167,7 @@ del.diff-remove {
 		# comparison when user is using {{FrontSide}}
 		s = f"<hr id=answer>{s}"
 	result = re.sub(self.typeboxAnsPat, s.replace('\\', r'\\'), buf)
-	return result # + "<br><br>[Debug]<br>" + html.escape(result)
+	return result
 
 def diff_prettyHtml(dmp, diffs):
 	"""Convert a diff array into a pretty HTML report.
@@ -198,9 +189,9 @@ def diff_prettyHtml(dmp, diffs):
 					.replace("\n", "&para;<br>")
 			)
 			if op == dmp.DIFF_INSERT:
-					html.append('<ins class="diff-add">%s</ins>' % text)
+					html.append('<ins class="diff-missing">%s</ins>' % text)
 			elif op == dmp.DIFF_DELETE:
-					html.append('<del class="diff-remove">%s</del>' % text)
+					html.append('<del class="diff-wrong">%s</del>' % text)
 			elif op == dmp.DIFF_EQUAL:
 					html.append("<span>%s</span>" % text)
 	return "".join(html)
