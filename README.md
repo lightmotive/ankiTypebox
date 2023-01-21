@@ -83,11 +83,16 @@ CREATE TABLE users (
 
 ## Coming to the Anki Add-on library soon
 
-Because the original add-on is no longer maintained, I intend to publish this as a separate add-on in the near-future, then maintain it as long as I have the time. Until then, you can copy the code here into your local Anki addons folder for local use (the add-on will only be available on the device to which you copy the files). If you'd like to do that:
+Because the original add-on is no longer maintained, I intend to publish this as a separate add-on in the near-future, then maintain it as long as I have the time. Until then, you can copy the code in this repository into your local Anki add-ons folder for local use (the add-on will only be available on the device to which you copy the files). Steps:
 
-1. Copy all files in this repository (you can exclude the README.md and `readme` folder) to the associated add-on folder after backing it up.
-   1. On MacOS, that's usually here: `/Users/you/Library/Application Support/Anki2/addons21/681236951`.
-      1. Create a copy of the current `681236951` folder before copying this repo's files to the original.
-      2. If you don't see the Library folder in your home folder (replace `you` above), show hidden items with `Shift + Cmd + .`.
-   2. Please search the web to find the addons21 or similar folder on other operating systems.
-2. Restart Anki. No need to modify your existing *Type Multi-Line* notes; just enjoy a more reliable and less tedious recall practice! And don't forget to add the notes that previously caused errors!
+1. Locate the *Multi-Line Type Answer Box* files: `Shift + Cmd/Ctrl + A`, select the add-on, click *View Files* to open the folder.
+2. Go up one level and duplicate the folder `681236951` to back up the current contents.
+3. Copy all files in this repository (you can exclude the README.md and `readme` folder) to the `681236951` folder.
+4. Restart Anki.
+   1. No need to modify your existing *Type Multi-Line* notes; just enjoy a more reliable and less tedious recall practice when you get long-form answers wrong.
+   2. Feel free to add the notes that previously caused errors.
+   3. **If anything goes wrong:**
+      1. Delete the `681236951` add-on folder that contains this repo's code.
+      2. Rename the copy you created in the step above to `681236951`
+      3. Restart Anki.
+         1. If you didn't create a backup, or if that doesn't work, delete the add-on in Anki, then add it again by clicking *Get Add-ons* and pasting in the add-on ID: `681236951`.
