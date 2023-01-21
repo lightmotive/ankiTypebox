@@ -10,6 +10,7 @@ This project is a fork of [this repo](https://github.com/robbielaldrich/ankiType
   - [Comparison when incorrectly answered](#comparison-when-incorrectly-answered)
   - [Comparison when correctly answered](#comparison-when-incorrectly-answered)
 - [Coming to the Anki Add-on library soon](#coming-to-the-anki-add-on-library-soon)
+
 ***
 
 ## Example `Type Multi-Line` Note
@@ -48,7 +49,9 @@ CREATE TABLE users (
 
 ![Incorrect Answer, Anki Output](readme/incorrect-answer-anki-output.png)
 
-Notice how Anki's comparison requires looking at *two separate blocks to get the full picture of incorrect vs correct*. That can significantly slow down recall practice and learning.
+Notice how Anki's comparison requires looking at *two separate blocks to get the full picture of incorrect vs correct*. That's not too bad when comparing the single lines of text for which Anki's system was designed.
+
+Regardless of how many lines you're comparing, that comparison layout can significantly slow you down.
 
 #### This add-on's output when answered incorrectly
 
@@ -87,4 +90,4 @@ Because the original add-on is no longer maintained, I intend to publish this as
       1. Create a copy of the current `681236951` folder before copying this repo's files to the original.
       2. If you don't see the Library folder in your home folder (replace `you` above), show hidden items with `Shift + Cmd + .`.
    2. Please search the web to find the addons21 or similar folder on other operating systems.
-2. Restart Anki. No need to update your *Type Multi-Line* notes.
+2. Restart Anki. No need to modify your existing *Type Multi-Line* notes; just enjoy a more reliable and less tedious recall practice! And don't forget to add the notes that previously caused errors!
