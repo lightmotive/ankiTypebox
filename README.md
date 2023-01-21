@@ -6,8 +6,10 @@ This project is a fork of [this repo](https://github.com/robbielaldrich/ankiType
 
 - Support for Anki v2.1.56.
 - Support for content with `\` characters (like regular expressions)
-- A totally different, but intuitive, semantic difference output (thanks to [this Google-owned project](https://github.com/google/diff-match-patch/)) when a card is answered incorrectly. Details below...
-
+- A consolidated and Anki-familiar semantic difference output (thanks to [this Google-owned project](https://github.com/google/diff-match-patch/)) when a card is answered incorrectly:
+  - [Comparison when incorrectly answered](#comparison-when-incorrectly-answered)
+  - [Comparison when correctly answered](#comparison-when-incorrectly-answered)
+- [Coming to the Anki Add-on library soon](#coming-to-the-anki-add-on-library-soon)
 ***
 
 ## Example `Type Multi-Line` Note
