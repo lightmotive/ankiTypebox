@@ -54,7 +54,7 @@ This layout enables a user to focus on what's incorrect, including adjacent ~~in
 
 ![Incorrect Answer, DMP Output](readme/incorrect-answer-dmp-output.png)
 
-### Comparison when correctly answered
+### Output when correctly answered
 
 *Correct input text:*
 
