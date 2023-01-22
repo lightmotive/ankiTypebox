@@ -188,21 +188,16 @@ def diff_prettyHtml(dmp, diffs):
 	Returns:
 		HTML representation.
 	"""
-	html = []
+	elements = []
 	for (op, data) in diffs:
-			text = (
-					data.replace("&", "&amp;")
-					.replace("<", "&lt;")
-					.replace(">", "&gt;")
-					.replace("\n", "&para;<br>")
-			)
+			text = html.escape(data)
 			if op == dmp.DIFF_INSERT:
-					html.append('<ins class="diff-missing">%s</ins>' % text)
+					elements.append('<ins class="diff-missing">%s</ins>' % text)
 			elif op == dmp.DIFF_DELETE:
-					html.append('<del class="diff-wrong">%s</del>' % text)
+					elements.append('<del class="diff-wrong">%s</del>' % text)
 			elif op == dmp.DIFF_EQUAL:
-					html.append("<span>%s</span>" % text)
-	return "".join(html)
+					elements.append("<span>%s</span>" % text)
+	return "".join(elements)
 
 def focusTypebox(card):
     """
