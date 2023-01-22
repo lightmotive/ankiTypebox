@@ -116,29 +116,25 @@ def typeboxAnsAnswerFilter(self, buf: str) -> str:
 	provided = re.sub(r"\n", self.newline_placeholder, provided)
 	expected = re.sub(r"\n", self.newline_placeholder, expected)
 
-	# Generate inline-comparison, which is arguably easier to read than the
-	# `self.mw.col.compare_answer` method's result:
-	dmp = diff_match_patch()
-	diffs = dmp.diff_main(provided, expected)
-	dmp.diff_cleanupSemantic(diffs)
-	output = diff_prettyHtml(dmp, diffs)
-	# Determine correctness to apply correct class for overall result indicator
-	# (Green or Red left border)
-	outputHasDiff = re.search(r"<(del|ins)", output)
-	
 	# Anki compare (backend):
 	# This could be a configuration option in the future, e.g.,
 	# diff output: {semantic-diff|anki-diff}
 	# output_anki = self.mw.col.compare_answer(expected, provided)
 	# output_anki = output_anki.replace(self.newline_placeholder, "<br>")
 
-	if outputHasDiff:
+	if provided == expected:
+		# When answered correctly, show original content:
+		output = f'<div id="typeans" class="textbox-output answer-correct">{self.typeCorrect}</div>'
+	else:
+		# Generate inline-comparison, which is arguably easier to read than the
+		# `self.mw.col.compare_answer` method's result:
+		dmp = diff_match_patch()
+		diffs = dmp.diff_main(provided, expected)
+		dmp.diff_cleanupSemantic(diffs)
+		output = diff_prettyHtml(dmp, diffs)
 		# Restore line breaks to comparison result and use <code> element for monospacing:
 		output = output.replace(self.newline_placeholder, "<br>")
 		output = f'<div class="textbox-output answer-incorrect"><code id="typeans">{output}</code></div>'
-	else:
-		# When answered correctly, show original content:
-		output = f'<div id="typeans" class="textbox-output answer-correct">{self.typeCorrect}</div>'
 
 	# Update the type answer area
 	if self.card.model()["css"] and self.card.model()["css"].strip():
