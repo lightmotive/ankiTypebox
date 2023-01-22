@@ -55,7 +55,7 @@ Regardless of how many lines you're comparing, though, that dual-block layout ca
 
 #### This add-on's output when answered incorrectly
 
-This layout enables a user to focus on what's incorrect, including adjacent ~~incorrect~~correct values to speed up learning.
+This layout enables a user to focus on what's incorrect and missing in a single view to speed up learning, including adjacent ~~incorrect~~correct values.
 
 ![Incorrect Answer, Semantic Diff Output](readme/incorrect-answer-dmp-output.png)
 
