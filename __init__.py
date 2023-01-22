@@ -124,7 +124,7 @@ def typeboxAnsAnswerFilter(self, buf: str) -> str:
 
 	if provided == expected:
 		# When answered correctly, show original content:
-		output = f'<div id="typeans" class="typebox-output correct">{self.typeCorrect}</div>'
+		output = f'<div id="typeans" class="typebox-output correct" title="Correct, keep it up!">{self.typeCorrect}</div>'
 	else:
 		# Generate inline-comparison, which is arguably easier to read than the
 		# `self.mw.col.compare_answer` method's result:
@@ -134,7 +134,7 @@ def typeboxAnsAnswerFilter(self, buf: str) -> str:
 		output = diff_prettyHtml(dmp, diffs)
 		# Restore line breaks to comparison result and use <code> element for monospacing:
 		output = output.replace(self.newline_placeholder, "<br>")
-		output = f'<div class="typebox-output incorrect"><code id="typeans">{output}</code></div>'
+		output = f'<div class="typebox-output incorrect" title="Incorrect, see highlights..."><code id="typeans">{output}</code></div>'
 
 	# Update the type answer area
 	if self.card.model()["css"] and self.card.model()["css"].strip():
@@ -192,9 +192,9 @@ def diff_prettyHtml(dmp, diffs):
 	for (op, data) in diffs:
 			text = html.escape(data)
 			if op == dmp.DIFF_INSERT:
-					elements.append('<ins class="diff-missing">%s</ins>' % text)
+					elements.append('<ins class="diff-missing" title="missed">%s</ins>' % text)
 			elif op == dmp.DIFF_DELETE:
-					elements.append('<del class="diff-wrong">%s</del>' % text)
+					elements.append('<del class="diff-wrong" title="incorrect">%s</del>' % text)
 			elif op == dmp.DIFF_EQUAL:
 					elements.append("<span>%s</span>" % text)
 	return "".join(elements)
