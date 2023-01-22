@@ -124,7 +124,7 @@ def typeboxAnsAnswerFilter(self, buf: str) -> str:
 
 	if provided == expected:
 		# When answered correctly, show original content:
-		output = f'<div id="typeans" class="textbox-output answer-correct">{self.typeCorrect}</div>'
+		output = f'<div id="typeans" class="typebox-output correct">{self.typeCorrect}</div>'
 	else:
 		# Generate inline-comparison, which is arguably easier to read than the
 		# `self.mw.col.compare_answer` method's result:
@@ -134,7 +134,7 @@ def typeboxAnsAnswerFilter(self, buf: str) -> str:
 		output = diff_prettyHtml(dmp, diffs)
 		# Restore line breaks to comparison result and use <code> element for monospacing:
 		output = output.replace(self.newline_placeholder, "<br>")
-		output = f'<div class="textbox-output answer-incorrect"><code id="typeans">{output}</code></div>'
+		output = f'<div class="typebox-output incorrect"><code id="typeans">{output}</code></div>'
 
 	# Update the type answer area
 	if self.card.model()["css"] and self.card.model()["css"].strip():
@@ -151,16 +151,16 @@ pre {
    white-space:pre-wrap;
    %s%s 
 }
-.textbox-output.answer-correct {
+.typebox-output.correct {
 	border-left: 0.6em solid rgb(100, 255, 148);
 }
-.textbox-output.answer-incorrect {
+.typebox-output.incorrect {
 	border-left: 0.6em solid rgb(255, 150, 154);
 }
-ins.diff-missing {
+.typebox-output ins.diff-missing {
 	background-color: rgb(193, 193, 193);
 }
-del.diff-wrong {
+.typebox-output del.diff-wrong {
 	background-color: rgb(255, 150, 154);
 }
 </style>    
