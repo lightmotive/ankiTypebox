@@ -1,6 +1,6 @@
 # Anki Add-on: Multi-Line Type Answer Box w/ Semantic Diff
 
-An add-on for [Anki Spaced Repetition Software](https://apps.ankiweb.net/) that embeds an input text area for reviewing notes that need typed multi-line answers. Great for remembering certain code concepts, passages of poetry, or any other long-form answer you want to type without prompts. You might use cloze deletion notes to gradually develop mastery, then add a long-form note to test that you can explain a holistic concept that comprises the facts.
+An add-on for [Anki Spaced Repetition Software](https://apps.ankiweb.net/) that embeds an input text area for reviewing notes that need typed multi-line answers. Used sparingly, it's great for remembering certain code concepts, passages of poetry, or any other long-form answer you want to type without prompts. For example, you might use cloze deletion notes to gradually develop knowledge around related facts, then add a long-form note to test your knowledge from a more holistic perspective and without prompts to make it easier. That takes you a step further along your path to mastery.
 
 This project is a fork of [this repo](https://github.com/robbielaldrich/ankiTypebox) for the [Multi-Line Type Answer Box](https://ankiweb.net/shared/info/681236951) add-on, which is no longer maintained. Here's what this add-on contributes:
 
