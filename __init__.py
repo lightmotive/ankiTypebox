@@ -74,12 +74,16 @@ def typeboxAnsQuestionFilter(self, buf: str) -> str:
 		self.typeboxAnsPat,
 		"""
 <center>
-<textarea id=typeans class=textbox-input onkeypress="typeboxAns();" style="font-family: '%s'; font-size: %spx;"></textarea>
+<textarea id="typeans" class="textbox-input" style="font-family: '%s'; font-size: %spx;"></textarea>
 </center>
 <script>
-function typeboxAns() {
-	if (window.event.keyCode == 13 && window.event.ctrlKey) pycmd("ans");
-}
+document.getElementById("typeans").addEventListener("keydown", function(event) {
+	if (event.code == "Enter" && (event.metaKey || event.ctrlKey)) {
+		event.preventDefault();
+		event.stopPropagation();
+		pycmd("ans");
+	}
+});
 </script>
 	"""
 		% (self.typeFont, self.typeSize),
@@ -131,10 +135,10 @@ def typeboxAnsAnswerFilter(self, buf: str) -> str:
 	if outputHasDiff:
 		# Restore line breaks to comparison result and use <code> element for monospacing:
 		output = output.replace(self.newline_placeholder, "<br>")
-		output = f'<div class="textbox-output answer-incorrect"><code id=typeans>{output}</code></div>'
+		output = f'<div class="textbox-output answer-incorrect"><code id="typeans">{output}</code></div>'
 	else:
 		# When answered correctly, show original content:
-		output = f'<div id=typeans class="textbox-output answer-correct">{self.typeCorrect}</div>'
+		output = f'<div id="typeans" class="textbox-output answer-correct">{self.typeCorrect}</div>'
 
 	# Update the type answer area
 	if self.card.model()["css"] and self.card.model()["css"].strip():
