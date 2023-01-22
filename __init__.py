@@ -118,13 +118,23 @@ def typeboxAnsAnswerFilter(self, buf: str) -> str:
 	diffs = dmp.diff_main(provided, expected)
 	dmp.diff_cleanupSemantic(diffs)
 	output = diff_prettyHtml(dmp, diffs)
-	# Restore line breaks to comparison result:
-	output = output.replace(self.newline_placeholder, "<br>")
-	output = f'<code id=typeans>{output}</code>'
 	# Determine correctness to apply correct class for overall result indicator
 	# (Green or Red left border)
 	outputHasDiff = re.search(r"<(del|ins)", output)
-	diffResultCSSClass = "answer-incorrect" if outputHasDiff else "answer-correct"
+	
+	# Anki compare (backend):
+	# This could be a configuration option in the future, e.g.,
+	# diff output: {semantic-diff|anki-diff}
+	# output_anki = self.mw.col.compare_answer(expected, provided)
+	# output_anki = output_anki.replace(self.newline_placeholder, "<br>")
+
+	if outputHasDiff:
+		# Restore line breaks to comparison result and use <code> element for monospacing:
+		output = output.replace(self.newline_placeholder, "<br>")
+		output = f'<div class="textbox-output answer-incorrect"><code id=typeans>{output}</code></div>'
+	else:
+		# When answered correctly, show original content:
+		output = f'<div id=typeans class="textbox-output answer-correct">{self.typeCorrect}</div>'
 
 	# Update the type answer area
 	if self.card.model()["css"] and self.card.model()["css"].strip():
@@ -154,20 +164,18 @@ del.diff-wrong {
 	background-color: rgb(255, 150, 154);
 }
 </style>    
-<pre class="textbox-output %s">%s</pre>
+%s
 </div>
 """ % (
 		font_family,
 		font_size,
-		diffResultCSSClass,
-		output,
+		output
 	)
 	if hadHR:
 		# a hack to ensure the q/a separator falls before the answer
 		# comparison when user is using {{FrontSide}}
 		s = f"<hr id=answer>{s}"
-	result = re.sub(self.typeboxAnsPat, s.replace('\\', r'\\'), buf)
-	return result
+	return re.sub(self.typeboxAnsPat, s.replace('\\', r'\\'), buf)
 
 def diff_prettyHtml(dmp, diffs):
 	"""Convert a diff array into a pretty HTML report.
