@@ -1,8 +1,7 @@
 import html
 import re
-from . import tinycss
 from aqt.reviewer import Reviewer
-from anki.utils import stripHTML
+from anki.utils import strip_html
 from aqt import gui_hooks
 from aqt import mw
 from .diff_match_patch import diff_match_patch
@@ -29,19 +28,6 @@ def typeboxAnsFilter(self, buf: str) -> str:
 
 	return self.typeAnsAnswerFilter(buf)
 
-
-def _set_font_details_from_card(reviewer, style, selector):
-	selector_rules = [r for r in style.rules if hasattr(r, "selector")]
-	card_style = next(
-		(r for r in selector_rules if "".join([t.value for t in r.selector]) == selector), None)
-	if card_style:
-		for declaration in card_style.declarations:
-			if declaration.name == "font-family":
-				reviewer.typeFont = "".join([t.value for t in declaration.value])
-			if declaration.name == "font-size":
-				reviewer.typeSize = "".join([str(t.value) for t in declaration.value])
-
-
 def typeboxAnsQuestionFilter(self, buf: str) -> str:
 	self.typeCorrect = None
 	m = re.search(self.typeboxAnsPat, buf)
@@ -62,13 +48,6 @@ def typeboxAnsQuestionFilter(self, buf: str) -> str:
 		maybe_answer_field = next((f for f in fields if f == "Back"), fields[-1])
 		self.typeFont = maybe_answer_field["font"]
 		self.typeSize = maybe_answer_field["size"]
-
-	# ".card" styling should overwrite font/font size, as it does for the rest of the card
-	if self.card.model()["css"] and self.card.model()["css"].strip():
-		parser = tinycss.make_parser("page3")
-		parsed_style = parser.parse_stylesheet(self.card.model()["css"])
-		_set_font_details_from_card(self, parsed_style, ".card")
-		_set_font_details_from_card(self, parsed_style, ".textbox-input")
 
 	return re.sub(
 		self.typeboxAnsPat,
@@ -108,7 +87,7 @@ def typeboxAnsAnswerFilter(self, buf: str) -> str:
 	expected = re.sub(r"(<div><br>|<br>)", "\n", expected)
 	expected = re.sub(r"(<div>)+", "\n", expected)
 	expected = re.sub(r"(\r\n)", "\n", expected)
-	expected = stripHTML(expected)
+	expected = strip_html(expected)
 	expected = html.unescape(expected)
 	expected = expected.replace("\xa0", " ")
 	expected = expected.strip()
@@ -134,14 +113,8 @@ def typeboxAnsAnswerFilter(self, buf: str) -> str:
 		output = diff_prettyHtml(dmp, diffs)
 		# Restore line breaks to comparison result and use <code> element for monospacing:
 		output = output.replace(self.newline_placeholder, "<br>")
-		output = f'<div class="typebox-output incorrect" title="Incorrect, see highlights..."><code id="typeans">{output}</code></div>'
+		output = f'<div class="typebox-output incorrect"><code id="typeans" class="typebox-output-code" title="Incorrect, see highlights...">{output}</code></div>'
 
-	# Update the type answer area
-	if self.card.model()["css"] and self.card.model()["css"].strip():
-		parser = tinycss.make_parser("page3")
-		parsed_style = parser.parse_stylesheet(self.card.model()["css"])
-		_set_font_details_from_card(self, parsed_style, ".textbox-output-parent")
-		_set_font_details_from_card(self, parsed_style, ".textbox-output")
 	font_family = "font-family: '%s';" % self.typeFont if hasattr(self, "typeFont") else ""
 	font_size = "font-size: %spx" % self.typeSize if hasattr(self, "typeSize") else ""
 	s = """
